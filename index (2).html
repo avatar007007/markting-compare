@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>مقارنة مواقع التسويق — أفضل سعر وأعلى تقييم</title>
+<style>
+  :root{font-family: "Segoe UI", Tahoma, Arial; --accent:#0b74de;}
+  body{margin:0;padding:20px;background:#f6f8fb;color:#111;direction:rtl}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  h1{margin:0;font-size:20px}
+  .controls{display:flex;gap:8px;align-items:center}
+  button,select{padding:8px 10px;border-radius:8px;border:1px solid #d6dbe7;background:white;cursor:pointer}
+  .card{background:white;border-radius:10px;box-shadow:0 6px 18px rgba(12,30,63,.06);padding:16px;margin-top:16px}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{padding:10px;text-align:right;border-bottom:1px solid #eef2f8}
+  th{background:#fbfdff;font-weight:600}
+  .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:13px}
+  .price{font-weight:700;color:var(--accent)}
+  @media (min-width:780px){header{padding:0 8px}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>مقارنة مواقع التسويق</h1>
+    <div style="color:#556">ابحث عن أفضل سعر وأعلى تقييم لمواقع التسويق الرقمية</div>
+  </div>
+
+  <div class="controls">
+    <label for="sort">ترتيب:</label>
+    <select id="sort">
+      <option value="default">افتراضي</option>
+      <option value="price-asc">الأرخص أولاً (سعر)</option>
+      <option value="price-desc">الأغلى أولاً (سعر)</option>
+      <option value="rating-desc">الأعلى تقييماً</option>
+      <option value="rating-asc">الأدنى تقييماً</option>
+    </select>
+    <button id="reset">إعادة تعيين</button>
+  </div>
+</header>
+
+<section class="card">
+  <table aria-label="قائمة المواقع">
+    <thead>
+      <tr>
+        <th>الموقع / الخدمة</th>
+        <th>الوصف المختصر</th>
+        <th>سعر تقريبي (شهري)</th>
+        <th>تقييم (5)</th>
+      </tr>
+    </thead>
+    <tbody id="rows">
+      <!-- يتم ملؤها بالـ JS -->
+    </tbody>
+  </table>
+  <div style="margin-top:12px;color:#556;font-size:13px">
+    ملاحظة: الأسعار تقريبية وقد تتغير. حرّك خيارات الفرز لترتيب النتائج بحسب السعر أو التقييم.
+  </div>
+</section>
+
+<script>
+/* بيانات تجريبية — عدّلها كما تريد */
+const data = [
+  {name:"Wix", desc:"منشئ مواقع سهل مع أدوات تسويق وإعلانات", priceMonthly:0, rating:4.4, url:"#"},
+  {name:"WordPress.com", desc:"منصة تدوين وإدارة محتوى قابلة للتوسع", priceMonthly:0, rating:4.2, url:"#"},
+  {name:"Carrd", desc:"صفحات واحدة بسيطة وسريعة للنشر", priceMonthly:0, rating:4.6, url:"#"},
+  {name:"Webflow", desc:"تصميم متقدّم وتحكم كامل للواجهات", priceMonthly:0, rating:4.1, url:"#"},
+  {name:"Ucraft", desc:"منشئ صفحات مع قدرة ربط دومين مجاني أحياناً", priceMonthly:0, rating:3.9, url:"#"}
+];
+
+const tbody = document.getElementById('rows');
+function render(list){
+  tbody.innerHTML = '';
+  list.forEach(item=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${escapeHtml(item.name)}</strong><div style="font-size:12px;margin-top:6px"><a href="${item.url}" target="_blank">زيارة</a></div></td>
+      <td>${escapeHtml(item.desc)}</td>
+      <td class="price">${item.priceMonthly===0 ? 'مجاني / خطة مجانية' : ('$'+item.priceMonthly)}</td>
+      <td><span class="badge">${item.rating} / 5</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* حماية بسيطة من XSS عند إدراج نص */
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* فرز */
+document.getElementById('sort').addEventListener('change', (e)=>{
+  const v = e.target.value;
+  let list = [...data];
+  if(v==='price-asc') list.sort((a,b)=>a.priceMonthly - b.priceMonthly);
+  if(v==='price-desc') list.sort((a,b)=>b.priceMonthly - a.priceMonthly);
+  if(v==='rating-asc') list.sort((a,b)=>a.rating - b.rating);
+  if(v==='rating-desc') list.sort((a,b)=>b.rating - a.rating);
+  render(list);
+});
+document.getElementById('reset').addEventListener('click', ()=>{ render(data); document.getElementById('sort').value='default'; });
+
+/* بداية */
+render(data);
+</script>
+</body>
+</html>
